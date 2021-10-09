@@ -1,12 +1,38 @@
 "use strict";
 
-require("core-js/modules/web.dom-collections.iterator.js");
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } else if (call !== void 0) { throw new TypeError("Derived constructors may only return object or undefined"); } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _wrapNativeSuper(Class) { var _cache = typeof Map === "function" ? new Map() : undefined; _wrapNativeSuper = function _wrapNativeSuper(Class) { if (Class === null || !_isNativeFunction(Class)) return Class; if (typeof Class !== "function") { throw new TypeError("Super expression must either be null or a function"); } if (typeof _cache !== "undefined") { if (_cache.has(Class)) return _cache.get(Class); _cache.set(Class, Wrapper); } function Wrapper() { return _construct(Class, arguments, _getPrototypeOf(this).constructor); } Wrapper.prototype = Object.create(Class.prototype, { constructor: { value: Wrapper, enumerable: false, writable: true, configurable: true } }); return _setPrototypeOf(Wrapper, Class); }; return _wrapNativeSuper(Class); }
+
+function _construct(Parent, args, Class) { if (_isNativeReflectConstruct()) { _construct = Reflect.construct; } else { _construct = function _construct(Parent, args, Class) { var a = [null]; a.push.apply(a, args); var Constructor = Function.bind.apply(Parent, a); var instance = new Constructor(); if (Class) _setPrototypeOf(instance, Class.prototype); return instance; }; } return _construct.apply(null, arguments); }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+
+function _isNativeFunction(fn) { return Function.toString.call(fn).indexOf("[native code]") !== -1; }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
 function _classPrivateMethodInitSpec(obj, privateSet) { _checkPrivateRedeclaration(obj, privateSet); privateSet.add(obj); }
 
@@ -26,31 +52,19 @@ function _classExtractFieldDescriptor(receiver, privateMap, action) { if (!priva
 
 function _classApplyDescriptorSet(receiver, descriptor, value) { if (descriptor.set) { descriptor.set.call(receiver, value); } else { if (!descriptor.writable) { throw new TypeError("attempted to set read only private field"); } descriptor.value = value; } }
 
-var _watchTimeTotal = /*#__PURE__*/new WeakMap();
-
 var _watchTimeToday = /*#__PURE__*/new WeakMap();
-
-var _visitTimeTotal = /*#__PURE__*/new WeakMap();
 
 var _visitTimeToday = /*#__PURE__*/new WeakMap();
 
 var _createStorageItem = /*#__PURE__*/new WeakSet();
 
-class YTimeStore {
-  constructor() {
+var YTimeStore = /*#__PURE__*/function () {
+  function YTimeStore() {
+    _classCallCheck(this, YTimeStore);
+
     _classPrivateMethodInitSpec(this, _createStorageItem);
 
-    _classPrivateFieldInitSpec(this, _watchTimeTotal, {
-      writable: true,
-      value: void 0
-    });
-
     _classPrivateFieldInitSpec(this, _watchTimeToday, {
-      writable: true,
-      value: void 0
-    });
-
-    _classPrivateFieldInitSpec(this, _visitTimeTotal, {
       writable: true,
       value: void 0
     });
@@ -60,15 +74,7 @@ class YTimeStore {
       value: void 0
     });
 
-    const todayString = new Date().toLocaleDateString();
-
-    _classPrivateFieldSet(this, _watchTimeTotal, _classPrivateMethodGet(this, _createStorageItem, _createStorageItem2).call(this, "wt_total", {
-      count: 0
-    }));
-
-    _classPrivateFieldSet(this, _visitTimeTotal, _classPrivateMethodGet(this, _createStorageItem, _createStorageItem2).call(this, "vt_total", {
-      count: 0
-    }));
+    var todayString = new Date().toLocaleDateString();
 
     _classPrivateFieldSet(this, _watchTimeToday, _classPrivateMethodGet(this, _createStorageItem, _createStorageItem2).call(this, "wt_" + todayString, {
       count: 0
@@ -79,108 +85,128 @@ class YTimeStore {
     }));
   }
 
-  get todayWatchTime() {
-    return _classPrivateFieldGet(this, _watchTimeToday).count;
-  }
+  _createClass(YTimeStore, [{
+    key: "todayWatchTime",
+    get: function get() {
+      return _classPrivateFieldGet(this, _watchTimeToday).count;
+    },
+    set: function set(count) {
+      _classPrivateFieldGet(this, _watchTimeToday).count = count;
+    }
+  }, {
+    key: "todayVisitTime",
+    get: function get() {
+      return _classPrivateFieldGet(this, _visitTimeToday).count;
+    },
+    set: function set(count) {
+      _classPrivateFieldGet(this, _visitTimeToday).count = count;
+    }
+  }]);
 
-  set todayWatchTime(count) {
-    _classPrivateFieldGet(this, _watchTimeToday).count = count;
-  }
-
-  get todayVisitTime() {
-    return _classPrivateFieldGet(this, _visitTimeToday).count;
-  }
-
-  set todayVisitTime(count) {
-    _classPrivateFieldGet(this, _visitTimeToday).count = count;
-  }
-
-}
+  return YTimeStore;
+}();
 
 function _createStorageItem2(key, initial) {
-  const initialState = JSON.stringify(initial);
+  var initialState = JSON.stringify(initial);
   return new Proxy(localStorage, {
-    get: (target, prop) => {
+    get: function get(target, prop) {
       return JSON.parse(target.getItem(key) || initialState)[prop];
     },
-    set: (target, prop, value) => {
-      const previousState = JSON.parse(target.getItem(key) || initialState);
-      target.setItem(key, JSON.stringify(_objectSpread(_objectSpread({}, previousState), {}, {
-        [prop]: value
-      })));
+    set: function set(target, prop, value) {
+      var previousState = JSON.parse(target.getItem(key) || initialState);
+      target.setItem(key, JSON.stringify(_objectSpread(_objectSpread({}, previousState), {}, _defineProperty({}, prop, value))));
       return true;
     }
   });
 }
 
-var _runClock = /*#__PURE__*/new WeakSet();
+var Timer = /*#__PURE__*/function (_HTMLElement) {
+  _inherits(Timer, _HTMLElement);
 
-class YTime extends HTMLSpanElement {
-  constructor() {
-    super();
+  var _super = _createSuper(Timer);
 
-    _classPrivateMethodInitSpec(this, _runClock);
+  function Timer() {
+    var _this;
 
-    _defineProperty(this, "store", void 0);
+    _classCallCheck(this, Timer);
 
-    _defineProperty(this, "clock", void 0);
+    _this = _super.call(this);
 
-    _defineProperty(this, "showTime", void 0);
+    _defineProperty(_assertThisInitialized(_this), "store", void 0);
 
-    this.store = new YTimeStore();
-    this.attachShadow({
-      mode: "open"
-    });
+    _defineProperty(_assertThisInitialized(_this), "clock", void 0);
+
+    _defineProperty(_assertThisInitialized(_this), "showTime", void 0);
+
+    return _this;
   }
 
-  get videoWrapper() {
-    return document.querySelector("#movie_player");
-  }
-
-  get videoPlayer() {
-    return document.querySelector("#movie_player").querySelector("video");
-  }
-
-  connectedCallback() {
-    var _this$videoPlayer, _this$videoPlayer2;
-
-    const observerHandled = playing => _classPrivateMethodGet(this, _runClock, _runClock2).bind(this, playing);
-
-    (_this$videoPlayer = this.videoPlayer) === null || _this$videoPlayer === void 0 ? void 0 : _this$videoPlayer.addEventListener("playing", () => observerHandled(true));
-    (_this$videoPlayer2 = this.videoPlayer) === null || _this$videoPlayer2 === void 0 ? void 0 : _this$videoPlayer2.addEventListener("pause", () => observerHandled(false));
-    this.innerText = "text";
-  }
-
-  disconnectedCallback() {
-    var _this$videoPlayer3, _this$videoPlayer4;
-
-    const observerHandled = playing => _classPrivateMethodGet(this, _runClock, _runClock2).bind(this, playing);
-
-    (_this$videoPlayer3 = this.videoPlayer) === null || _this$videoPlayer3 === void 0 ? void 0 : _this$videoPlayer3.removeEventListener("playing", () => observerHandled(true));
-    (_this$videoPlayer4 = this.videoPlayer) === null || _this$videoPlayer4 === void 0 ? void 0 : _this$videoPlayer4.removeEventListener("pause", () => observerHandled(false));
-  }
-
-}
-
-function _runClock2(playing) {
-  if (!playing) {
-    this.clock && clearInterval(this.clock);
-    return;
-  }
-
-  this.clock = setInterval(() => {
-    if (this.videoWrapper.classList.contains("playing-mode")) {
-      this.store.todayVisitTime += 1;
-      this.store.todayWatchTime += 1;
-      this.showTime = this.store.todayWatchTime;
+  _createClass(Timer, [{
+    key: "videoWrapper",
+    get: function get() {
+      return document.querySelector("#movie_player");
     }
-  }, 1000);
-}
+  }, {
+    key: "videoPlayer",
+    get: function get() {
+      var _document$querySelect;
 
-customElements.define("c-ytime", YTime, {
-  extends: "span"
-});
-const yTime = document.createElement("c-ytime", {
-  is: "span"
-});
+      return (_document$querySelect = document.querySelector("#movie_player")) === null || _document$querySelect === void 0 ? void 0 : _document$querySelect.querySelector("video");
+    }
+  }, {
+    key: "watchTimeDisplay",
+    set: function set(time) {
+      this.querySelector("#watchTime").innerText = this.formatSeconds(time);
+    }
+  }, {
+    key: "visitTimeDisplay",
+    set: function set(time) {
+      this.querySelector("#visitTime").innerText = this.formatSeconds(time);
+    }
+  }, {
+    key: "connectedCallback",
+    value: function connectedCallback() {
+      this.store = new YTimeStore();
+      this.innerHTML = "<span id=\"watchTime\"></span><i>|</i><span id=\"visitTime\">/span>";
+      this.visitTimeDisplay = this.store.todayVisitTime;
+      this.watchTimeDisplay = this.store.todayWatchTime;
+      this.style.color = "white";
+      this.style.fontSize = "2rem";
+      this.style.position = "absolute";
+      this.style.left = "200px";
+      this.querySelector("i").style.margin = "0 0.65rem";
+      this.runClock(); // const observerHandled = this.runClock.bind(this)
+      // this.videoPlayer?.addEventListener("playing", observerHandled)
+      // this.videoPlayer?.addEventListener("pause", observerHandled)
+    }
+  }, {
+    key: "runClock",
+    value: function runClock(e) {
+      var _this2 = this;
+
+      this.clock && clearInterval(this.clock);
+      this.clock = setInterval(function () {
+        if (_this2.videoWrapper.classList.contains("playing-mode")) {
+          _this2.store.todayWatchTime += 1;
+        }
+
+        _this2.store.todayVisitTime += 1;
+        _this2.visitTimeDisplay = _this2.store.todayVisitTime;
+        _this2.watchTimeDisplay = _this2.store.todayWatchTime;
+      }, 1000);
+    }
+  }, {
+    key: "formatSeconds",
+    value: function formatSeconds(sec) {
+      var date = new Date(0);
+      date.setSeconds(sec);
+      return date.toISOString().substr(11, 8);
+    }
+  }]);
+
+  return Timer;
+}( /*#__PURE__*/_wrapNativeSuper(HTMLElement));
+
+customElements.define("c-timer", Timer);
+var yTime = document.createElement("c-timer");
 document.querySelector("#start").appendChild(yTime);

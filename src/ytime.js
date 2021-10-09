@@ -1,14 +1,9 @@
 class YTimeStore {
-  #watchTimeTotal
   #watchTimeToday
-  #visitTimeTotal
   #visitTimeToday
 
   constructor() {
     const todayString = new Date().toLocaleDateString()
-
-    this.#watchTimeTotal = this.#createStorageItem("wt_total", { count: 0 })
-    this.#visitTimeTotal = this.#createStorageItem("vt_total", { count: 0 })
     this.#watchTimeToday = this.#createStorageItem("wt_" + todayString, { count: 0 })
     this.#visitTimeToday = this.#createStorageItem("vt_" + todayString, { count: 0 })
   }
@@ -45,15 +40,13 @@ class YTimeStore {
   }
 }
 
-class YTime extends HTMLSpanElement {
+class Timer extends HTMLElement {
   store
   clock
   showTime
 
   constructor() {
     super()
-    this.store = new YTimeStore()
-    this.attachShadow({ mode: "open" })
   }
 
   get videoWrapper() {
@@ -61,41 +54,60 @@ class YTime extends HTMLSpanElement {
   }
 
   get videoPlayer() {
-    return document.querySelector("#movie_player").querySelector("video")
+    return document.querySelector("#movie_player")?.querySelector("video")
+  }
+
+  set watchTimeDisplay(time) {
+    this.querySelector("#watchTime").innerText = this.formatSeconds(time)
+  }
+
+  set visitTimeDisplay(time) {
+    this.querySelector("#visitTime").innerText = this.formatSeconds(time)
   }
 
   connectedCallback() {
-    const observerHandled = (playing) => this.#runClock.bind(this, playing)
+    this.store = new YTimeStore()
+    this.innerHTML = `<span id="watchTime"></span><i>|</i><span id="visitTime">/span>`
 
-    this.videoPlayer?.addEventListener("playing", () => observerHandled(true))
-    this.videoPlayer?.addEventListener("pause", () => observerHandled(false))
+    this.visitTimeDisplay = this.store.todayVisitTime
+    this.watchTimeDisplay = this.store.todayWatchTime
 
-    this.innerText = "text"
+    this.style.color = "white"
+    this.style.fontSize = "2rem"
+    this.style.position = "absolute"
+    this.style.left = "200px"
+
+    this.querySelector("i").style.margin="0 0.65rem"
+
+    this.runClock()
+
+    // const observerHandled = this.runClock.bind(this)
+
+    // this.videoPlayer?.addEventListener("playing", observerHandled)
+    // this.videoPlayer?.addEventListener("pause", observerHandled)
   }
 
-  disconnectedCallback() {
-    const observerHandled = (playing) => this.#runClock.bind(this, playing)
-
-    this.videoPlayer?.removeEventListener("playing", () => observerHandled(true))
-    this.videoPlayer?.removeEventListener("pause", () => observerHandled(false))
-  }
-
-  #runClock(playing) {
-    if (!playing) {
-      this.clock && clearInterval(this.clock)
-      return
-    }
+  runClock(e) {
+    this.clock && clearInterval(this.clock)
 
     this.clock = setInterval(() => {
       if (this.videoWrapper.classList.contains("playing-mode")) {
-        this.store.todayVisitTime += 1
         this.store.todayWatchTime += 1
-        this.showTime = this.store.todayWatchTime
       }
+
+      this.store.todayVisitTime += 1
+      this.visitTimeDisplay = this.store.todayVisitTime
+      this.watchTimeDisplay = this.store.todayWatchTime
     }, 1000)
+  }
+
+  formatSeconds(sec) {
+    var date = new Date(0)
+    date.setSeconds(sec)
+    return date.toISOString().substr(11, 8)
   }
 }
 
-customElements.define("c-ytime", YTime, { extends: "span" })
-const yTime = document.createElement("c-ytime", { is: "span" })
+customElements.define("c-timer", Timer)
+const yTime = document.createElement("c-timer")
 document.querySelector("#start").appendChild(yTime)
