@@ -2,10 +2,11 @@
   "name": "ytime",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "source": "src/index.js",
+  "main": "public/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build" : "babel src -d dist/static"
+    "build": "babel src -d public",
+    "serve": "node server.js"
   },
   "repository": {
     "type": "git",
@@ -22,5 +23,10 @@
     "@babel/cli": "7.15.7",
     "@babel/core": "7.15.8",
     "@babel/preset-env": "7.15.8"
+  },
+  "dependencies": {
+    "cors": "2.8.5",
+    "express": "4.17.1",
+    "nodemon": "2.0.13"
   }
 }

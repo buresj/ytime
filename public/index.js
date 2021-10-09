@@ -175,9 +175,7 @@ var Timer = /*#__PURE__*/function (_HTMLElement) {
       this.style.position = "absolute";
       this.style.left = "200px";
       this.querySelector("i").style.margin = "0 0.65rem";
-      this.runClock(); // const observerHandled = this.runClock.bind(this)
-      // this.videoPlayer?.addEventListener("playing", observerHandled)
-      // this.videoPlayer?.addEventListener("pause", observerHandled)
+      this.runClock();
     }
   }, {
     key: "runClock",

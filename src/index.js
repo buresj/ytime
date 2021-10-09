@@ -77,14 +77,9 @@ class Timer extends HTMLElement {
     this.style.position = "absolute"
     this.style.left = "200px"
 
-    this.querySelector("i").style.margin="0 0.65rem"
+    this.querySelector("i").style.margin = "0 0.65rem"
 
     this.runClock()
-
-    // const observerHandled = this.runClock.bind(this)
-
-    // this.videoPlayer?.addEventListener("playing", observerHandled)
-    // this.videoPlayer?.addEventListener("pause", observerHandled)
   }
 
   runClock(e) {
