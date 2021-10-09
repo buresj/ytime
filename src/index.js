@@ -72,7 +72,7 @@ class Timer extends HTMLElement {
     this.visitTimeDisplay = this.store.todayVisitTime
     this.watchTimeDisplay = this.store.todayWatchTime
 
-    this.style.color = "white"
+    this.style.color = "red"
     this.style.fontSize = "2rem"
     this.style.position = "absolute"
     this.style.left = "200px"
