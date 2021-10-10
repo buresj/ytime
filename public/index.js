@@ -28,6 +28,26 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _iterableToArrayLimit(arr, i) { var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"]; if (_i == null) return; var _arr = []; var _n = true; var _d = false; var _s, _e; try { for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
@@ -52,9 +72,7 @@ function _classExtractFieldDescriptor(receiver, privateMap, action) { if (!priva
 
 function _classApplyDescriptorSet(receiver, descriptor, value) { if (descriptor.set) { descriptor.set.call(receiver, value); } else { if (!descriptor.writable) { throw new TypeError("attempted to set read only private field"); } descriptor.value = value; } }
 
-var _watchTimeToday = /*#__PURE__*/new WeakMap();
-
-var _visitTimeToday = /*#__PURE__*/new WeakMap();
+var _today = /*#__PURE__*/new WeakMap();
 
 var _createStorageItem = /*#__PURE__*/new WeakSet();
 
@@ -64,42 +82,57 @@ var YTimeStore = /*#__PURE__*/function () {
 
     _classPrivateMethodInitSpec(this, _createStorageItem);
 
-    _classPrivateFieldInitSpec(this, _watchTimeToday, {
-      writable: true,
-      value: void 0
-    });
-
-    _classPrivateFieldInitSpec(this, _visitTimeToday, {
+    _classPrivateFieldInitSpec(this, _today, {
       writable: true,
       value: void 0
     });
 
     var todayString = new Date().toLocaleDateString();
 
-    _classPrivateFieldSet(this, _watchTimeToday, _classPrivateMethodGet(this, _createStorageItem, _createStorageItem2).call(this, "wt_" + todayString, {
-      count: 0
-    }));
-
-    _classPrivateFieldSet(this, _visitTimeToday, _classPrivateMethodGet(this, _createStorageItem, _createStorageItem2).call(this, "vt_" + todayString, {
-      count: 0
+    _classPrivateFieldSet(this, _today, _classPrivateMethodGet(this, _createStorageItem, _createStorageItem2).call(this, "ytime_" + todayString, {
+      visitTime: 0,
+      watchTime: 0,
+      videos: []
     }));
   }
 
   _createClass(YTimeStore, [{
     key: "todayWatchTime",
     get: function get() {
-      return _classPrivateFieldGet(this, _watchTimeToday).count;
+      return _classPrivateFieldGet(this, _today).watchTime;
     },
     set: function set(count) {
-      _classPrivateFieldGet(this, _watchTimeToday).count = count;
+      _classPrivateFieldGet(this, _today).watchTime = count;
     }
   }, {
     key: "todayVisitTime",
     get: function get() {
-      return _classPrivateFieldGet(this, _visitTimeToday).count;
+      return _classPrivateFieldGet(this, _today).visitTime;
     },
     set: function set(count) {
-      _classPrivateFieldGet(this, _visitTimeToday).count = count;
+      _classPrivateFieldGet(this, _today).visitTime = count;
+    }
+  }, {
+    key: "todayVideos",
+    get: function get() {
+      return _classPrivateFieldGet(this, _today).videos;
+    },
+    set: function set(video) {
+      _classPrivateFieldGet(this, _today).videos = [].concat(_toConsumableArray(_classPrivateFieldGet(this, _today).videos), [video]);
+    }
+  }, {
+    key: "allWatchTimes",
+    get: function get() {
+      return Object.entries(localStorage).map(function (_ref) {
+        var _ref2 = _slicedToArray(_ref, 2),
+            key = _ref2[0],
+            value = _ref2[1];
+
+        if (key.includes("ytime")) {
+          var data = JSON.parse(value);
+          return (data === null || data === void 0 ? void 0 : data.watchTime) || 0;
+        }
+      });
     }
   }]);
 
@@ -138,6 +171,8 @@ var Timer = /*#__PURE__*/function (_HTMLElement) {
 
     _defineProperty(_assertThisInitialized(_this), "showTime", void 0);
 
+    _defineProperty(_assertThisInitialized(_this), "location", void 0);
+
     return _this;
   }
 
@@ -159,22 +194,34 @@ var Timer = /*#__PURE__*/function (_HTMLElement) {
       this.querySelector("#watchTime").innerText = this.formatSeconds(time);
     }
   }, {
+    key: "watchTimeDisplayColor",
+    set: function set(hsl) {
+      this.querySelector("#watchTime").style.color = hsl;
+    }
+  }, {
     key: "visitTimeDisplay",
     set: function set(time) {
       this.querySelector("#visitTime").innerText = this.formatSeconds(time);
     }
   }, {
+    key: "todaysVideosDisplay",
+    set: function set(count) {
+      this.querySelector("#seenVideos").innerText = count;
+    }
+  }, {
     key: "connectedCallback",
     value: function connectedCallback() {
       this.store = new YTimeStore();
-      this.innerHTML = "<span id=\"watchTime\"></span><i>|</i><span id=\"visitTime\">/span>";
+      this.innerHTML = "<style>i {margin: 0 0.65rem} </style><span id=\"watchTime\"></span><i>|</i><span id=\"visitTime\"></span><i>|</i><span id=\"seenVideos\"></span>";
       this.visitTimeDisplay = this.store.todayVisitTime;
       this.watchTimeDisplay = this.store.todayWatchTime;
       this.style.color = "white";
       this.style.fontSize = "2rem";
       this.style.position = "absolute";
       this.style.left = "200px";
-      this.querySelector("i").style.margin = "0 0.65rem";
+      var handleVideoObserver = this.observeVideo.bind(this);
+      document.addEventListener("yt-navigate-finish", handleVideoObserver);
+      this.observeVideo();
       this.runClock();
     }
   }, {
@@ -184,13 +231,17 @@ var Timer = /*#__PURE__*/function (_HTMLElement) {
 
       this.clock && clearInterval(this.clock);
       this.clock = setInterval(function () {
-        if (_this2.videoWrapper.classList.contains("playing-mode")) {
+        var _this2$videoWrapper;
+
+        if ((_this2$videoWrapper = _this2.videoWrapper) !== null && _this2$videoWrapper !== void 0 && _this2$videoWrapper.classList.contains("playing-mode")) {
           _this2.store.todayWatchTime += 1;
         }
 
         _this2.store.todayVisitTime += 1;
         _this2.visitTimeDisplay = _this2.store.todayVisitTime;
         _this2.watchTimeDisplay = _this2.store.todayWatchTime;
+        _this2.todaysVideosDisplay = _this2.store.todayVideos.length || 0;
+        _this2.watchTimeDisplayColor = _this2.computeHSLFromTime(_this2.store.todayWatchTime);
       }, 1000);
     }
   }, {
@@ -199,6 +250,35 @@ var Timer = /*#__PURE__*/function (_HTMLElement) {
       var date = new Date(0);
       date.setSeconds(sec);
       return date.toISOString().substr(11, 8);
+    }
+  }, {
+    key: "observeVideo",
+    value: function observeVideo() {
+      var url = new URL(window.location.href);
+      var id = url.searchParams.get("v");
+
+      if (id && !this.store.todayVideos.includes(id)) {
+        this.store.todayVideos = id;
+      }
+    }
+  }, {
+    key: "computeHSLFromTime",
+    value: function computeHSLFromTime(currentTime) {
+      var l = this.store.allWatchTimes.slice(0, -1).filter(function (a) {
+        return a > 0;
+      }).length;
+      var sum = this.store.allWatchTimes.reduce(function (p, c) {
+        return p += c;
+      }, 0);
+
+      if (l <= 1 || sum <= 1 || !l || !sum) {
+        return "hsl(0,0%,100%)";
+      }
+
+      var avg = Math.round(sum / l);
+      var percent = currentTime / avg * 100 - 100;
+      var hue = 100 - percent > 0 ? 100 - percent : 360 - percent;
+      return "hsla(".concat(Math.round(hue), ",100%,50%,1)");
     }
   }]);
 
