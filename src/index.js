@@ -36,6 +36,8 @@ class YTimeStore {
         const data = JSON.parse(value)
         return data?.watchTime || 0
       }
+
+      return 0
     })
   }
 
@@ -60,6 +62,7 @@ class Timer extends HTMLElement {
   clock
   showTime
   location
+  isWindowActive
 
   constructor() {
     super()
@@ -90,6 +93,7 @@ class Timer extends HTMLElement {
   }
 
   connectedCallback() {
+    this.isWindowActive = true
     this.store = new YTimeStore()
     this.innerHTML = `<style>i {margin: 0 0.65rem} </style><span id="watchTime"></span><i>|</i><span id="visitTime"></span><i>|</i><span id="seenVideos"></span>`
 
@@ -103,25 +107,31 @@ class Timer extends HTMLElement {
 
     const handleVideoObserver = this.observeVideo.bind(this)
     document.addEventListener("yt-navigate-finish", handleVideoObserver)
+    document.addEventListener("visibilitychange", () => (this.isWindowActive = !document.hidden))
 
     this.observeVideo()
     this.runClock()
   }
 
-  runClock(e) {
+  runClock() {
     this.clock && clearInterval(this.clock)
 
     this.clock = setInterval(() => {
-      if (this.videoWrapper?.classList.contains("playing-mode")) {
+      if (this.videoWrapper?.classList.contains("playing-mode") && this.isWindowActive) {
         this.store.todayWatchTime += 1
       }
 
       this.store.todayVisitTime += 1
-      this.visitTimeDisplay = this.store.todayVisitTime
-      this.watchTimeDisplay = this.store.todayWatchTime
-      this.watchTimeDisplayColor = this.computeHSLFromTime(this.store.todayWatchTime)
-      this.todaysVideosDisplay = this.store.todayVideos.length || 0
+
+      this.render()
     }, 1000)
+  }
+
+  render() {
+    this.visitTimeDisplay = this.store.todayVisitTime
+    this.watchTimeDisplay = this.store.todayWatchTime
+    this.watchTimeDisplayColor = this.computeHSLFromTime(this.store.todayWatchTime)
+    this.todaysVideosDisplay = this.store.todayVideos.length || 0
   }
 
   formatSeconds(sec) {
@@ -148,8 +158,10 @@ class Timer extends HTMLElement {
     }
 
     const avg = Math.round(sum / l)
-    const percent = (currentTime / avg) * 100 - 100
-    const hue = 100 - percent > 0 ? 100 - percent : 360 - percent
+    const percent = (currentTime / avg) * 100
+    const middle = 100
+    const hue = percent < middle ? middle - percent : 360 - (percent - middle)
+
     return `hsla(${Math.round(hue)},100%,50%,1)`
   }
 }

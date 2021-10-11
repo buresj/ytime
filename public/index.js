@@ -132,6 +132,8 @@ var YTimeStore = /*#__PURE__*/function () {
           var data = JSON.parse(value);
           return (data === null || data === void 0 ? void 0 : data.watchTime) || 0;
         }
+
+        return 0;
       });
     }
   }]);
@@ -173,6 +175,8 @@ var Timer = /*#__PURE__*/function (_HTMLElement) {
 
     _defineProperty(_assertThisInitialized(_this), "location", void 0);
 
+    _defineProperty(_assertThisInitialized(_this), "isWindowActive", void 0);
+
     return _this;
   }
 
@@ -211,6 +215,9 @@ var Timer = /*#__PURE__*/function (_HTMLElement) {
   }, {
     key: "connectedCallback",
     value: function connectedCallback() {
+      var _this2 = this;
+
+      this.isWindowActive = true;
       this.store = new YTimeStore();
       this.innerHTML = "<style>i {margin: 0 0.65rem} </style><span id=\"watchTime\"></span><i>|</i><span id=\"visitTime\"></span><i>|</i><span id=\"seenVideos\"></span>";
       this.visitTimeDisplay = this.store.todayVisitTime;
@@ -221,28 +228,37 @@ var Timer = /*#__PURE__*/function (_HTMLElement) {
       this.style.left = "200px";
       var handleVideoObserver = this.observeVideo.bind(this);
       document.addEventListener("yt-navigate-finish", handleVideoObserver);
+      document.addEventListener("visibilitychange", function () {
+        return _this2.isWindowActive = !document.hidden;
+      });
       this.observeVideo();
       this.runClock();
     }
   }, {
     key: "runClock",
-    value: function runClock(e) {
-      var _this2 = this;
+    value: function runClock() {
+      var _this3 = this;
 
       this.clock && clearInterval(this.clock);
       this.clock = setInterval(function () {
-        var _this2$videoWrapper;
+        var _this3$videoWrapper;
 
-        if ((_this2$videoWrapper = _this2.videoWrapper) !== null && _this2$videoWrapper !== void 0 && _this2$videoWrapper.classList.contains("playing-mode")) {
-          _this2.store.todayWatchTime += 1;
+        if ((_this3$videoWrapper = _this3.videoWrapper) !== null && _this3$videoWrapper !== void 0 && _this3$videoWrapper.classList.contains("playing-mode") && _this3.isWindowActive) {
+          _this3.store.todayWatchTime += 1;
         }
 
-        _this2.store.todayVisitTime += 1;
-        _this2.visitTimeDisplay = _this2.store.todayVisitTime;
-        _this2.watchTimeDisplay = _this2.store.todayWatchTime;
-        _this2.todaysVideosDisplay = _this2.store.todayVideos.length || 0;
-        _this2.watchTimeDisplayColor = _this2.computeHSLFromTime(_this2.store.todayWatchTime);
+        _this3.store.todayVisitTime += 1;
+
+        _this3.render();
       }, 1000);
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      this.visitTimeDisplay = this.store.todayVisitTime;
+      this.watchTimeDisplay = this.store.todayWatchTime;
+      this.watchTimeDisplayColor = this.computeHSLFromTime(this.store.todayWatchTime);
+      this.todaysVideosDisplay = this.store.todayVideos.length || 0;
     }
   }, {
     key: "formatSeconds",
@@ -276,8 +292,9 @@ var Timer = /*#__PURE__*/function (_HTMLElement) {
       }
 
       var avg = Math.round(sum / l);
-      var percent = currentTime / avg * 100 - 100;
-      var hue = 100 - percent > 0 ? 100 - percent : 360 - percent;
+      var percent = currentTime / avg * 100;
+      var middle = 100;
+      var hue = percent < middle ? middle - percent : 360 - (percent - middle);
       return "hsla(".concat(Math.round(hue), ",100%,50%,1)");
     }
   }]);
