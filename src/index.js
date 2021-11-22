@@ -127,6 +127,31 @@ class Timer extends HTMLElement {
     }, 1000)
   }
 
+  block() {
+    const twoHours = 60 * 60 * 2
+    if (this.store.todayWatchTime > twoHours) {
+      const overlay = document.createElement("div")
+      overlay.id = "overlay"
+
+      const style = document.createElement("style")
+      style.textContent = `#overlay {
+      position: fixed; /* Sit on top of the page content */
+      width: 100%; /* Full width (cover the whole page) */
+      height: 100%; /* Full height (cover the whole page) */
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0,0,0,0.5); /* Black background with opacity */
+      z-index: 9999; /* Specify a stack order in case you're using a different order for other elements */
+      cursor: pointer; /* Add a pointer on hover */
+      }`
+
+      document.body.appendChild(style)
+      document.body.appendChild(overlay)
+    }
+  }
+
   render() {
     this.visitTimeDisplay = this.store.todayVisitTime
     this.watchTimeDisplay = this.store.todayWatchTime
@@ -143,6 +168,7 @@ class Timer extends HTMLElement {
   observeVideo() {
     const url = new URL(window.location.href)
     const id = url.searchParams.get("v")
+    this.block()
 
     if (id && !this.store.todayVideos.includes(id)) {
       this.store.todayVideos = id

@@ -253,6 +253,20 @@ var Timer = /*#__PURE__*/function (_HTMLElement) {
       }, 1000);
     }
   }, {
+    key: "block",
+    value: function block() {
+      var twoHours = 60 * 60 * 2;
+
+      if (this.store.todayWatchTime > twoHours) {
+        var overlay = document.createElement("div");
+        overlay.id = "overlay";
+        var style = document.createElement("style");
+        style.textContent = "#overlay {\n      position: fixed; /* Sit on top of the page content */\n      width: 100%; /* Full width (cover the whole page) */\n      height: 100%; /* Full height (cover the whole page) */\n      top: 0;\n      left: 0;\n      right: 0;\n      bottom: 0;\n      background-color: rgba(0,0,0,0.5); /* Black background with opacity */\n      z-index: 9999; /* Specify a stack order in case you're using a different order for other elements */\n      cursor: pointer; /* Add a pointer on hover */\n      }";
+        document.body.appendChild(style);
+        document.body.appendChild(overlay);
+      }
+    }
+  }, {
     key: "render",
     value: function render() {
       this.visitTimeDisplay = this.store.todayVisitTime;
@@ -272,6 +286,7 @@ var Timer = /*#__PURE__*/function (_HTMLElement) {
     value: function observeVideo() {
       var url = new URL(window.location.href);
       var id = url.searchParams.get("v");
+      this.block();
 
       if (id && !this.store.todayVideos.includes(id)) {
         this.store.todayVideos = id;
